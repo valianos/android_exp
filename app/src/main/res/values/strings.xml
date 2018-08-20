@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">My Application</string>
+    <string name="img_button">My image button</string>
+    <string name="click_fella">Click on the little fella!</string>
+    <string name="found_guy">Here is your little guy!!</string>
+    <string name="switch_between_activities">to go to another activity</string>
+    <string name="exit">just to exit app</string>
 </resources>
