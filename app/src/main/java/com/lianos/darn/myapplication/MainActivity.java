@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import com.lianos.darn.myapplication.utilities.BackClickListener;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -17,10 +18,13 @@ public class MainActivity extends AppCompatActivity {
         // Link with activity xml file.
         setContentView(R.layout.activity_main);
 
-        ImageButton button = findViewById(R.id.button);
-
         // Bind button with listener.
+        ImageButton button = findViewById(R.id.button);
         button.setOnClickListener(new ClickListener());
+
+        // Bind exit button with listener.
+        ImageButton exit = findViewById(R.id.exit_button);
+        exit.setOnClickListener(new BackClickListener(this));
 
     }
 
@@ -34,8 +38,6 @@ public class MainActivity extends AppCompatActivity {
 
             Intent second = new Intent(MainActivity.this, SecondActivity.class);
             MainActivity.this.startActivity(second);
-
-            finish();
 
         }
 

@@ -5,4 +5,6 @@
     <string name="found_guy">Here is your little guy!!</string>
     <string name="switch_between_activities">to go to another activity</string>
     <string name="exit">just to exit app</string>
+    <string name="switch_me">Click me to do nothing</string>
+    <string name="back">back_button</string>
 </resources>
