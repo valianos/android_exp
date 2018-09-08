@@ -9,7 +9,7 @@
 
     <Switch
 
-            android:text="@string/switch_me"
+            android:text="@string/file_io"
             android:layout_width="183dp"
             android:layout_height="36dp"
             android:id="@+id/on_off"
