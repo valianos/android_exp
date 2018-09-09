@@ -1,1 +1,1 @@
-include ':dev-app'
+include ':dev-app', ':expensesApp'
