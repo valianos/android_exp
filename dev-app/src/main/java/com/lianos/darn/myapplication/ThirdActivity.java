@@ -30,6 +30,14 @@ public class ThirdActivity extends AppCompatActivity {
         ImageButton back = findViewById(R.id.back_button_third);
         back.setOnClickListener(new BackClickListener(this));
 
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+
+            int value = bundle.getInt("a");
+            Log.d("Debug message", "Received a: " + value);
+
+        }
+
     }
 
     private class CheckedListener implements OnCheckedChangeListener {
