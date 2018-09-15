@@ -1,3 +1,15 @@
 <resources>
+
     <string name="app_name">Expenses App</string>
+    <string name="signUp_text">Are you new? Sign-up!</string>
+    <string name="login_text">If not, just log-in to your account.</string>
+    <string name="pass">Password</string>
+    <string name="name">Username</string>
+    <string name="to_log_in">to log in</string>
+    <string name="log_in">Log-in</string>
+    <string name="sign_up">Sign-up</string>
+    <string name="done_button">done button</string>
+    <string name="button_to_login">button to login</string>
+    <string name="button_to_add_an_account">button to add an account</string>
+
 </resources>
