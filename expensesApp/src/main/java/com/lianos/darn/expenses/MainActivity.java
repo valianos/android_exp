@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
 
-            Log.d("Debug message", "Clicked log-in");
+            Log.d("Debug message", "Clicked sign-up");
 
             Intent signUpActivity = new Intent(MainActivity.this, SignUpActivity.class);
             MainActivity.this.startActivity(signUpActivity);
