@@ -1,14 +1,16 @@
 package com.lianos.darn.expenses;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import com.lianos.darn.expenses.utilities.BackClickListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LoginActivity extends AppCompatActivity {
+
+    private static final Logger log = LoggerFactory.getLogger(LoginActivity.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +35,7 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
 
-            Log.d("Debug message", "Clicked log-in");
+            log.debug("Clicked to finish login.");
 
         }
 

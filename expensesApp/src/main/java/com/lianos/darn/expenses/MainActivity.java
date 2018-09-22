@@ -1,13 +1,16 @@
 package com.lianos.darn.expenses;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final Logger log = LoggerFactory.getLogger(MainActivity.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
         Button signUpButton = findViewById(R.id.button_signUp);
         signUpButton.setOnClickListener(new SignUpClickListener());
 
+        log.debug("Started Expenses application.");
+
     }
 
     public class LoginClickListener implements View.OnClickListener {
@@ -32,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
 
-            Log.d("Debug message", "Clicked log-in");
+            log.debug("Clicked log-in.");
 
             Intent loginActivity = new Intent(MainActivity.this, LoginActivity.class);
             MainActivity.this.startActivity(loginActivity);
@@ -46,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
 
-            Log.d("Debug message", "Clicked sign-up");
+            log.debug("Clicked sign-up.");
 
             Intent signUpActivity = new Intent(MainActivity.this, SignUpActivity.class);
             MainActivity.this.startActivity(signUpActivity);
