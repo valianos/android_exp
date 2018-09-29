@@ -99,4 +99,21 @@
 
     />
 
+    <TextView
+
+            android:text="@string/log_in"
+            android:layout_width="56dp"
+            android:layout_height="50dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:id="@+id/textViewLogin"
+            tools:ignore="MissingConstraints"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/text_username"
+            android:textColorHint="@android:color/black"
+
+    />
+
 </android.support.constraint.ConstraintLayout>

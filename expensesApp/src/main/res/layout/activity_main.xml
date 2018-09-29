@@ -24,7 +24,7 @@
 
     <TextView
 
-            android:text="@string/signUp_text"
+            android:text="@string/sign_up_text"
             android:textColor="@android:color/background_dark"
             android:textStyle="bold"
             android:textAlignment="center"

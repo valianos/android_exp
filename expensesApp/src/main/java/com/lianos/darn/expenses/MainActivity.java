@@ -1,12 +1,19 @@
 package com.lianos.darn.expenses;
 
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+
+import static com.lianos.darn.expenses.SignUpActivity.SIGNUP_CREDENTIALS_FILENAME;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,11 +29,11 @@ public class MainActivity extends AppCompatActivity {
 
         // Bind button with listener.
         Button loginButton = findViewById(R.id.button_login);
-        loginButton.setOnClickListener(new LoginClickListener());
+        loginButton.setOnClickListener(new LoginClickListener(this));
 
         // Bind button with listener.
         Button signUpButton = findViewById(R.id.button_signUp);
-        signUpButton.setOnClickListener(new SignUpClickListener());
+        signUpButton.setOnClickListener(new SignUpClickListener(this));
 
         log.debug("Started Expenses application.");
 
@@ -34,13 +41,62 @@ public class MainActivity extends AppCompatActivity {
 
     public class LoginClickListener implements View.OnClickListener {
 
+        private final Activity activity;
+
+        public LoginClickListener(Activity activity) { this.activity = activity; }
+
         @Override
         public void onClick(View v) {
 
-            log.debug("Clicked log-in.");
+            log.debug("Clicked login.");
 
-            Intent loginActivity = new Intent(MainActivity.this, LoginActivity.class);
-            MainActivity.this.startActivity(loginActivity);
+            // First check that the file that contains the credentials
+            // does exist. Show an alert if not.
+            File parent = getFilesDir();
+            File file = new File(parent, SIGNUP_CREDENTIALS_FILENAME);
+            if (!file.exists()) {
+
+                log.debug("File does not exist.");
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
+                alertDialogBuilder.setMessage(R.string.login_alert);
+                alertDialogBuilder.setPositiveButton(R.string.login_positive_alert,
+                        new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                log.debug("Clicked to go to sign up. Following ..");
+
+                                Intent signUpActivity = new Intent(MainActivity.this, SignUpActivity.class);
+                                MainActivity.this.startActivity(signUpActivity);
+
+                            }
+
+                        });
+                alertDialogBuilder.setNegativeButton(R.string.cancel,
+                        new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                log.debug("Clicked cancel.");
+
+                            }
+
+                        });
+
+                AlertDialog dialog = alertDialogBuilder.create();
+                dialog.show();
+
+            } else {
+
+                log.debug("File exists. Going to login.");
+
+                Intent loginActivity = new Intent(MainActivity.this, LoginActivity.class);
+                MainActivity.this.startActivity(loginActivity);
+
+            }
 
         }
 
@@ -48,13 +104,62 @@ public class MainActivity extends AppCompatActivity {
 
     public class SignUpClickListener implements View.OnClickListener {
 
+        private final Activity activity;
+
+        public SignUpClickListener(Activity activity) { this.activity = activity; }
+
         @Override
         public void onClick(View v) {
 
             log.debug("Clicked sign-up.");
 
-            Intent signUpActivity = new Intent(MainActivity.this, SignUpActivity.class);
-            MainActivity.this.startActivity(signUpActivity);
+            // First check that the file that contains the credentials
+            // doesn't exist. Show an alert if it exist.
+            File parent = getFilesDir();
+            File file = new File(parent, SIGNUP_CREDENTIALS_FILENAME);
+            if (file.exists()) {
+
+                log.debug("File exists..");
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
+                alertDialogBuilder.setMessage(R.string.sign_up_alert);
+                alertDialogBuilder.setPositiveButton(R.string.sign_up_positive_alert,
+                        new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                log.debug("Clicked to go to login. Following ..");
+
+                                Intent loginActivity = new Intent(MainActivity.this, LoginActivity.class);
+                                MainActivity.this.startActivity(loginActivity);
+
+                            }
+
+                        });
+                alertDialogBuilder.setNegativeButton(R.string.cancel,
+                        new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                log.debug("Clicked cancel.");
+
+                            }
+
+                        });
+
+                AlertDialog dialog = alertDialogBuilder.create();
+                dialog.show();
+
+            } else {
+
+                log.debug("File does not exist. Going to sign up.");
+
+                Intent signUpActivity = new Intent(MainActivity.this, SignUpActivity.class);
+                MainActivity.this.startActivity(signUpActivity);
+
+            }
 
         }
 

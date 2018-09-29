@@ -9,6 +9,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageButton;
 import android.widget.Switch;
 import com.lianos.darn.myapplication.utilities.BackClickListener;
+import com.lianos.darn.myapplication.utilities.FileUtils;
 
 import java.io.*;
 
@@ -71,7 +72,7 @@ public class ThirdActivity extends AppCompatActivity {
 
                     File parent = getFilesDir();
                     File file = new File(parent, "myFile");
-                    String fileContents = getStringFromFile(file.getPath());
+                    String fileContents = FileUtils.getStringFromFile(file.getPath());
                     Log.d("Debug message", "File contents are : " + fileContents);
 
                 } catch (Exception e) { e.printStackTrace(); }
@@ -81,33 +82,5 @@ public class ThirdActivity extends AppCompatActivity {
         }
 
     }
-
-    // --------------------------------- Helpers -------------------------------------------
-
-    public static String getStringFromFile (String filePath) throws Exception {
-
-        File fl = new File(filePath);
-        FileInputStream fin = new FileInputStream(fl);
-        String ret = convertStreamToString(fin);
-
-        //Make sure to close all streams.
-        fin.close();
-        return ret;
-
-    }
-
-    public static String convertStreamToString(InputStream is) throws Exception {
-
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        StringBuilder sb = new StringBuilder();
-
-        String line;
-        while ((line = reader.readLine()) != null) sb.append(line).append("\n");
-
-        reader.close();
-        return sb.toString();
-
-    }
-
 
 }

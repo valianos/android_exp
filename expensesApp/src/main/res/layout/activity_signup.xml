@@ -69,4 +69,21 @@
 
     />
 
+    <TextView
+
+            android:text="@string/sign_up"
+            android:layout_width="56dp"
+            android:layout_height="50dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:id="@+id/textViewLogin"
+            tools:ignore="MissingConstraints"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:textColorHint="@android:color/black"
+            app:layout_constraintBottom_toTopOf="@+id/textNewUsername"
+
+    />
+
 </android.support.constraint.ConstraintLayout>
