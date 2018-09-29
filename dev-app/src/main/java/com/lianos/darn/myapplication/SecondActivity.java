@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import com.lianos.darn.myapplication.MainActivity.MyData;
 import com.lianos.darn.myapplication.utilities.BackClickListener;
 
 public class SecondActivity extends AppCompatActivity {
@@ -17,6 +18,16 @@ public class SecondActivity extends AppCompatActivity {
 
         // Link with activity xml file.
         setContentView(R.layout.activity_second);
+
+        // Get variables.
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+
+            MyData data = bundle.getParcelable("p");
+            assert data != null;
+            Log.d("Debug message", "Received parcelable. Int: " + data.a + " String: " + data.str);
+
+        }
 
         // Bind button with listener.
         ImageButton button = findViewById(R.id.little_guy);
@@ -36,7 +47,9 @@ public class SecondActivity extends AppCompatActivity {
             Log.d("Debug message", "Going to third.");
 
             Intent third = new Intent(SecondActivity.this, ThirdActivity.class);
-            SecondActivity.this.startActivity(third);
+            third.putExtra("a", 1);
+            third.putExtra("B", 2);
+            startActivity(third);
 
         }
 
