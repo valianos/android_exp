@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 
 import static com.lianos.darn.expenses.SignUpActivity.SIGNUP_CREDENTIALS_FILENAME;
+import static com.lianos.darn.expenses.utilities.AlertUtils.checkCredentials;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -76,6 +77,8 @@ public class LoginActivity extends AppCompatActivity {
             // Here we get the variables from the text.
             EditText textPassword = findViewById(R.id.text_password);
             String password = textPassword.getText().toString();
+
+            if (!checkCredentials(username, password, activity)) return;
 
             String[] split = fileContents.split("-");
             if (!split[0].equals(username) || !split[1].equals(password)) {

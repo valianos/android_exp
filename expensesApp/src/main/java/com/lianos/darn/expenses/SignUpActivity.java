@@ -1,5 +1,6 @@
 package com.lianos.darn.expenses;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +13,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
+
+import static com.lianos.darn.expenses.utilities.AlertUtils.checkCredentials;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -29,11 +32,15 @@ public class SignUpActivity extends AppCompatActivity {
 
         // Bind button with listener.
         ImageButton buttonAdd = findViewById(R.id.add_button);
-        buttonAdd.setOnClickListener(new ClickListener());
+        buttonAdd.setOnClickListener(new ClickListener(this));
 
     }
 
     public class ClickListener implements View.OnClickListener {
+
+        private final Activity activity;
+
+        public ClickListener(Activity activity) { this.activity = activity; }
 
         @Override
         public void onClick(View v) {
@@ -47,6 +54,8 @@ public class SignUpActivity extends AppCompatActivity {
             String password = textPassword.getText().toString();
 
             log.debug("Username: [{}], password: [{}]", username, password);
+
+            if (!checkCredentials(username, password, activity)) return;
 
             // Here we create the file, and save the variables in it.
             // It is comfy to add a 'delimiter' (i.e. '-', '@' etc) for splitting afterwards.
