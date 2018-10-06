@@ -18,8 +18,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
+import static com.lianos.darn.expenses.PersonalInfoActivity.PERSONAL_INFO_FILE;
 import static com.lianos.darn.expenses.SignUpActivity.SIGNUP_CREDENTIALS_FILENAME;
-import static com.lianos.darn.expenses.utilities.AlertUtils.checkCredentials;
+import static com.lianos.darn.expenses.utilities.AlertUtils.checkFields;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -78,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
             EditText textPassword = findViewById(R.id.text_password);
             String password = textPassword.getText().toString();
 
-            if (!checkCredentials(username, password, activity)) return;
+            if (!checkFields(activity, username, password)) return;
 
             String[] split = fileContents.split("-");
             if (!split[0].equals(username) || !split[1].equals(password)) {
@@ -117,7 +118,30 @@ public class LoginActivity extends AppCompatActivity {
                 AlertDialog dialog = alertDialogBuilder.create();
                 dialog.show();
 
-            } else log.debug("Login was successful. User - password: [{}]", fileContents);
+            } else {
+
+                log.debug("Login was successful. User - password: [{}]", fileContents);
+
+                // First check that the file that contains the personal info
+                // doesn't exist.
+                File personalInfo = new File(parent, PERSONAL_INFO_FILE);
+                if (personalInfo.exists()) {
+
+                    log.debug("Personal info file exists. Going to display activity..");
+
+                    Intent display = new Intent(LoginActivity.this, DisplayActivity.class);
+                    LoginActivity.this.startActivity(display);
+
+                } else {
+
+                    log.debug("Personal info file does not exist. Going to personal info activity..");
+
+                    Intent personalInfoActivity = new Intent(LoginActivity.this, PersonalInfoActivity.class);
+                    LoginActivity.this.startActivity(personalInfoActivity);
+
+                }
+
+            }
 
         }
 

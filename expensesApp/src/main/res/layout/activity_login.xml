@@ -18,13 +18,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:id="@+id/text_password"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="228dp"
+            android:layout_marginBottom="128dp"
             app:layout_constraintHorizontal_bias="0.402"
             android:hint="@string/pass"
             android:textColorHint="@android:color/black"
 
-    />
+            app:layout_constraintBottom_toTopOf="@+id/button_done"/>
 
     <EditText
 
@@ -48,8 +47,8 @@
 
     <ImageButton
 
-            android:layout_width="56dp"
-            android:layout_height="62dp"
+            android:layout_width="73dp"
+            android:layout_height="67dp"
             app:srcCompat="@drawable/done_button"
             android:id="@+id/button_done"
             android:background="@android:color/holo_green_dark"
@@ -113,6 +112,24 @@
             android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toTopOf="@+id/text_username"
             android:textColorHint="@android:color/black"
+
+    />
+
+    <TextView
+
+            android:text="@string/the_field_must_be_filled"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="8dp"
+            android:layout_height="37dp"
+            android:layout_width="177dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/text_password"
+            app:layout_constraintHorizontal_bias="0.522"
+            app:layout_constraintVertical_bias="0.19"
 
     />
 

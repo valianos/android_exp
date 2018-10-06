@@ -1,9 +1,10 @@
 package com.lianos.darn.expenses;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
@@ -12,9 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileOutputStream;
 
-import static com.lianos.darn.expenses.utilities.AlertUtils.checkCredentials;
+import static com.lianos.darn.expenses.utilities.AlertUtils.checkFields;
+import static com.lianos.darn.expenses.utilities.FileUtils.dumpToFile;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -42,6 +43,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         public ClickListener(Activity activity) { this.activity = activity; }
 
+        @RequiresApi(api = Build.VERSION_CODES.O)
         @Override
         public void onClick(View v) {
 
@@ -55,25 +57,17 @@ public class SignUpActivity extends AppCompatActivity {
 
             log.debug("Username: [{}], password: [{}]", username, password);
 
-            if (!checkCredentials(username, password, activity)) return;
+            if (!checkFields(activity, username, password)) return;
 
             // Here we create the file, and save the variables in it.
             // It is comfy to add a 'delimiter' (i.e. '-', '@' etc) for splitting afterwards.
             String fileContents = username + "-" + password;
 
             // Check if file exists, create it otherwise (persistent).
-            FileOutputStream outputStream;
             File file = new File(getFilesDir(), SIGNUP_CREDENTIALS_FILENAME);
+            if (!dumpToFile(getApplicationContext(), file, fileContents)) return;
 
-            log.debug("Creating new file: [{}]", file.getPath());
-            try {
-
-                outputStream = openFileOutput(SIGNUP_CREDENTIALS_FILENAME, Context.MODE_PRIVATE);
-                outputStream.write(fileContents.getBytes());
-                outputStream.close();
-
-            } catch (Exception e) { log.error("Error handling file.", e); }
-
+            // TODO: Check that personalInfoFile does not exist. If it exists, delete it first and proceed.
             Intent personalInfoActivity = new Intent(SignUpActivity.this, PersonalInfoActivity.class);
             SignUpActivity.this.startActivity(personalInfoActivity);
 

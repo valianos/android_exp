@@ -3,8 +3,8 @@
     <string name="app_name">Expenses App</string>
     <string name="sign_up_text">Are you new? Sign-up!</string>
     <string name="login_text">If not, just log-in to your account.</string>
-    <string name="pass">Password</string>
-    <string name="name">Username</string>
+    <string name="pass">Password *</string>
+    <string name="name">Username *</string>
     <string name="log_in">Login</string>
     <string name="sign_up">Sign-up</string>
     <string name="done_button">done button</string>
@@ -19,5 +19,17 @@
     <string name="try_again">Try Again</string>
     <string name="go_to_main">Go Back</string>
     <string name="missing_fields">Missing fields</string>
+    <string name="income">Income *</string>
+    <string name="full_name">Full Name *</string>
+    <string name="title_activity_display">DisplayActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string name="button_to_go_back">button_to_go_back</string>
+    <string name="the_field_must_be_filled">*: Mandatory fields</string>
+    <string name="file_failure">Failed to create file.. Please try again.</string>
 
 </resources>
