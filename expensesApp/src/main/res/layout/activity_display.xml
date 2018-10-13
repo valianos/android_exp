@@ -7,9 +7,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
-        tools:openDrawer="start">
+        tools:openDrawer="start"
+        android:background="@android:color/holo_green_dark">
 
-    <include
+<include
             layout="@layout/app_bar_display"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
@@ -22,5 +23,19 @@
             android:fitsSystemWindows="true"
             app:headerLayout="@layout/nav_header_display"
             app:menu="@menu/activity_display_drawer"/>
+
+    <EditText
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/alert_text"
+            android:hint="@string/new_expense"
+            android:textColorHint="@android:color/black"
+            android:visibility="gone"
+
+    />
+
 
 </android.support.v4.widget.DrawerLayout>

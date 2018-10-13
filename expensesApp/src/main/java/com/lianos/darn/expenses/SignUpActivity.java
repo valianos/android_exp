@@ -14,7 +14,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
+import static com.lianos.darn.expenses.DisplayActivity.EXPENSES_FILE;
+import static com.lianos.darn.expenses.DisplayActivity.SAVINGS_FILE;
+import static com.lianos.darn.expenses.PersonalInfoActivity.PERSONAL_INFO_FILE;
 import static com.lianos.darn.expenses.utilities.AlertUtils.checkFields;
+import static com.lianos.darn.expenses.utilities.FileUtils.deleteFiles;
 import static com.lianos.darn.expenses.utilities.FileUtils.dumpToFile;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -63,11 +67,15 @@ public class SignUpActivity extends AppCompatActivity {
             // It is comfy to add a 'delimiter' (i.e. '-', '@' etc) for splitting afterwards.
             String fileContents = username + "-" + password;
 
-            // Check if file exists, create it otherwise (persistent).
-            File file = new File(getFilesDir(), SIGNUP_CREDENTIALS_FILENAME);
-            if (!dumpToFile(getApplicationContext(), file, fileContents)) return;
+            // Ensure all files are deleted..
+            File signUpFile = new File(getFilesDir(), SIGNUP_CREDENTIALS_FILENAME);
+            File personalInfoFile = new File(getFilesDir(), PERSONAL_INFO_FILE);
+            File expensesFile = new File(getFilesDir(), EXPENSES_FILE);
+            File savingsFile = new File(getFilesDir(), SAVINGS_FILE);
+            deleteFiles(signUpFile, personalInfoFile, expensesFile, savingsFile);
 
-            // TODO: Check that personalInfoFile does not exist. If it exists, delete it first and proceed.
+            if (!dumpToFile(getApplicationContext(), signUpFile, fileContents)) return;
+
             Intent personalInfoActivity = new Intent(SignUpActivity.this, PersonalInfoActivity.class);
             SignUpActivity.this.startActivity(personalInfoActivity);
 

@@ -7,6 +7,7 @@
     <string name="name">Username *</string>
     <string name="log_in">Login</string>
     <string name="sign_up">Sign-up</string>
+    <string name="personal_info">Personal Info</string>
     <string name="done_button">done button</string>
     <string name="button_to_login">button to login</string>
     <string name="button_to_add_an_account">button to add an account</string>
@@ -21,7 +22,7 @@
     <string name="missing_fields">Missing fields</string>
     <string name="income">Income *</string>
     <string name="full_name">Full Name *</string>
-    <string name="title_activity_display">DisplayActivity</string>
+    <string name="title_activity_display">Display</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -31,5 +32,13 @@
     <string name="button_to_go_back">button_to_go_back</string>
     <string name="the_field_must_be_filled">*: Mandatory fields</string>
     <string name="file_failure">Failed to create file.. Please try again.</string>
+    <string name="add_new_element">Adding a new element</string>
+    <string name="OK">OK</string>
+    <string name="new_expense">Add a new expense.</string>
+    <string name="greetings">Greetings </string>
+    <string name="wage">Your wage is:</string>
+    <string name="expenses">Your current expenses are:</string>
+    <string name="intro">Welcome</string>
+    <string name="force_sign_up">force sign up</string>
 
 </resources>

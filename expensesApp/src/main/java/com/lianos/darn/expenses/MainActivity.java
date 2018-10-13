@@ -24,6 +24,8 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
+        setTitle(R.string.app_name);
+
         // Link with the XML file.
         setContentView(R.layout.activity_main);
 
@@ -60,31 +62,16 @@ public class MainActivity extends AppCompatActivity {
 
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
                 alertDialogBuilder.setMessage(R.string.login_alert);
-                alertDialogBuilder.setPositiveButton(R.string.login_positive_alert,
-                        new DialogInterface.OnClickListener() {
+                alertDialogBuilder.setPositiveButton(R.string.login_positive_alert, (dialog, which) -> {
 
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                            log.debug("Clicked to go to sign up. Following ..");
 
-                                log.debug("Clicked to go to sign up. Following ..");
-
-                                Intent signUpActivity = new Intent(MainActivity.this, SignUpActivity.class);
-                                MainActivity.this.startActivity(signUpActivity);
-
-                            }
+                            Intent signUpActivity = new Intent(MainActivity.this, SignUpActivity.class);
+                            MainActivity.this.startActivity(signUpActivity);
 
                         });
-                alertDialogBuilder.setNegativeButton(R.string.cancel,
-                        new DialogInterface.OnClickListener() {
 
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                log.debug("Clicked cancel.");
-
-                            }
-
-                        });
+                alertDialogBuilder.setNegativeButton(R.string.cancel, (dialog, which) -> log.debug("Clicked cancel."));
 
                 AlertDialog dialog = alertDialogBuilder.create();
                 dialog.show();
@@ -123,31 +110,25 @@ public class MainActivity extends AppCompatActivity {
 
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
                 alertDialogBuilder.setMessage(R.string.sign_up_alert);
-                alertDialogBuilder.setPositiveButton(R.string.sign_up_positive_alert,
-                        new DialogInterface.OnClickListener() {
+                alertDialogBuilder.setPositiveButton(R.string.sign_up_positive_alert, (dialog, which) -> {
 
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                            log.debug("Clicked to go to login. Following ..");
 
-                                log.debug("Clicked to go to login. Following ..");
-
-                                Intent loginActivity = new Intent(MainActivity.this, LoginActivity.class);
-                                MainActivity.this.startActivity(loginActivity);
-
-                            }
+                            Intent loginActivity = new Intent(MainActivity.this, LoginActivity.class);
+                            MainActivity.this.startActivity(loginActivity);
 
                         });
-                alertDialogBuilder.setNegativeButton(R.string.cancel,
-                        new DialogInterface.OnClickListener() {
 
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                alertDialogBuilder.setNegativeButton(R.string.cancel, (dialog, which) -> log.debug("Clicked cancel."));
 
-                                log.debug("Clicked cancel.");
+                alertDialogBuilder.setNeutralButton(R.string.force_sign_up, (dialog, which) -> {
 
-                            }
+                    log.debug("Clicked to force sign-up.");
 
-                        });
+                    Intent signUp = new Intent(MainActivity.this, SignUpActivity.class);
+                    MainActivity.this.startActivity(signUp);
+
+                });
 
                 AlertDialog dialog = alertDialogBuilder.create();
                 dialog.show();

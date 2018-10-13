@@ -13,22 +13,6 @@
 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:ems="10"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:id="@+id/text_password"
-            android:layout_marginBottom="128dp"
-            app:layout_constraintHorizontal_bias="0.402"
-            android:hint="@string/pass"
-            android:textColorHint="@android:color/black"
-
-            app:layout_constraintBottom_toTopOf="@+id/button_done"/>
-
-    <EditText
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:inputType="textPersonName"
             android:ems="10"
             app:layout_constraintStart_toStartOf="parent"
@@ -44,6 +28,22 @@
             android:textColorHint="@android:color/black"
 
     />
+
+    <EditText
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:ems="10"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:id="@+id/text_password"
+            android:layout_marginBottom="128dp"
+            app:layout_constraintHorizontal_bias="0.402"
+            android:hint="@string/pass"
+            android:textColorHint="@android:color/black"
+
+            app:layout_constraintBottom_toTopOf="@+id/button_done"/>
 
     <ImageButton
 

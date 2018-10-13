@@ -1,7 +1,6 @@
 package com.lianos.darn.expenses;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,16 +10,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import com.lianos.darn.expenses.PersonalInfoActivity.PersonalInfo;
 import com.lianos.darn.expenses.utilities.BackClickListener;
 import com.lianos.darn.expenses.utilities.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.List;
 
+import static com.lianos.darn.expenses.DisplayActivity.EXPENSES_FILE;
+import static com.lianos.darn.expenses.DisplayActivity.SAVINGS_FILE;
 import static com.lianos.darn.expenses.PersonalInfoActivity.PERSONAL_INFO_FILE;
+import static com.lianos.darn.expenses.PersonalInfoActivity.PERSONAL_INFO_KEY;
 import static com.lianos.darn.expenses.SignUpActivity.SIGNUP_CREDENTIALS_FILENAME;
 import static com.lianos.darn.expenses.utilities.AlertUtils.checkFields;
+import static com.lianos.darn.expenses.utilities.FileUtils.getOrCreate;
+import static com.lianos.darn.expenses.utilities.FileUtils.getStringFromFile;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -90,28 +96,14 @@ public class LoginActivity extends AppCompatActivity {
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
                 alertDialogBuilder.setMessage(R.string.wrong_credentials);
                 alertDialogBuilder.setPositiveButton(R.string.try_again,
-                        new DialogInterface.OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                log.debug("Clicked to try again");
-
-                            }
-
-                        });
+                        (dialog, which) -> log.debug("Clicked to try again"));
                 alertDialogBuilder.setNegativeButton(R.string.go_to_main,
-                        new DialogInterface.OnClickListener() {
+                        (dialog, which) -> {
 
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                            log.debug("Clicked go to main.");
 
-                                log.debug("Clicked go to main.");
-
-                                Intent mainActivity = new Intent(LoginActivity.this, MainActivity.class);
-                                LoginActivity.this.startActivity(mainActivity);
-
-                            }
+                            Intent mainActivity = new Intent(LoginActivity.this, MainActivity.class);
+                            LoginActivity.this.startActivity(mainActivity);
 
                         });
 
@@ -128,8 +120,53 @@ public class LoginActivity extends AppCompatActivity {
                 if (personalInfo.exists()) {
 
                     log.debug("Personal info file exists. Going to display activity..");
+                    String personalContents;
+
+                    try {personalContents = getStringFromFile(personalInfo.getPath()); }
+                    catch (Exception e) {
+
+                        log.error("Failed to read from personal info file.");
+                        return;
+
+                    }
+
+                    // Prepare personal info object.
+                    String[] parts = personalContents.split("-");
+                    PersonalInfo info = new PersonalInfo(parts[0], Integer.parseInt(parts[1]));
+
+                    // Check if expenses file exists, create it otherwise (persistent).
+                    File expensesFile = new File(getFilesDir(), EXPENSES_FILE);
+                    List<String> expensesContents = getOrCreate(getApplicationContext(), expensesFile.getPath());
+                    if (expensesContents == null) return;
+
+                    log.debug("Expenses file found [{}]. Contents: [{}].", expensesFile.exists(), expensesContents);
+                    if (!expensesContents.isEmpty()) {
+
+                        for (String expense : expensesContents)
+                            if (!expense.isEmpty())
+                                info.expenses.add(Integer.parseInt(expense));
+
+                    }
+
+                    // Check if savings file exists, create it otherwise (persistent).
+                    File savingsFile = new File(getFilesDir(), SAVINGS_FILE);
+                    List<String> savingsContents = getOrCreate(getApplicationContext(), savingsFile.getPath());
+                    if (savingsContents == null) return;
+
+                    log.debug("Savings file found [{}]. Contents: [{}].", savingsFile.exists(), savingsContents);
+                    if (!savingsContents.isEmpty()) {
+
+                        for (String saving : savingsContents)
+                            if (!saving.isEmpty())
+                                info.savings.add(Integer.parseInt(saving));
+
+                    }
+
+                    log.debug(info.toString());
 
                     Intent display = new Intent(LoginActivity.this, DisplayActivity.class);
+                    display.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    display.putExtra(PERSONAL_INFO_KEY, info);
                     LoginActivity.this.startActivity(display);
 
                 } else {
