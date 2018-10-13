@@ -1,5 +1,6 @@
 package com.lianos.darn.expenses;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
@@ -17,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.lianos.darn.expenses.PersonalInfoActivity.PersonalInfo;
@@ -25,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.Calendar;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -59,16 +62,23 @@ public class DisplayActivity extends AppCompatActivity implements NavigationView
 
         // Link with the XML file.
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
+
         // Bind drawer with listener.
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        // Add values to fields.
+        displayFields();
 
-        // ------------------ Add values to fields.
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @SuppressLint("DefaultLocale")
+    private void displayFields() {
+
+        // ------- Main display fields.
 
         AtomicInteger totalMoney = new AtomicInteger();
 
@@ -94,23 +104,34 @@ public class DisplayActivity extends AppCompatActivity implements NavigationView
         TextView greeting = findViewById(R.id.greeting);
         greeting.setText(String.format("%s %s", getString(R.string.greetings), info.name));
 
-        TextView wage = findViewById(R.id.wage);
-        wage.setText(String.format("%s %s %s", getString(R.string.wage), info.wage, "Euros"));
+        TextView remaining = findViewById(R.id.remaining);
+        remaining.setText(String.format("%s %s %s", getString(R.string.remaining), money, "Euros"));
 
         TextView expenses = findViewById(R.id.expenses);
         expenses.setSelected(true);
         expenses.setText(String.format("%s %s", getString(R.string.expenses), PersonalInfo.getList(info.expenses)));
 
-//        Calendar instance = Calendar.getInstance();
-//
-//        System.out.println(instance.get(Calendar.DAY_OF_WEEK_IN_MONTH));
-//        System.out.println(instance.get(Calendar.DAY_OF_MONTH));
-//        System.out.println(instance.get(Calendar.DAY_OF_WEEK));
-//        System.out.println(instance.getActualMaximum(Calendar.DAY_OF_MONTH));
+        Calendar instance = Calendar.getInstance();
+        int monthDay = instance.get(Calendar.DAY_OF_MONTH);
+        int totalDays = instance.getActualMaximum(Calendar.DAY_OF_MONTH);
+        float perDayMoney = (float) money / (totalDays - monthDay);
+
+        TextView perDay = findViewById(R.id.per_day);
+        perDay.setText(String.format("%s %.3f %s", getString(R.string.per_day), perDayMoney, "Euros"));
+
+        // ------- Drawer display fields.
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        View headerView = navigationView.getHeaderView(0);
+
+        TextView header = headerView.findViewById(R.id.drawer_header);
+        header.setText(info.name);
+
+        TextView headerSub = headerView.findViewById(R.id.drawer_subtitle);
+        headerSub.setText(String.format("%s %s %s", getString(R.string.wage), info.wage, "Euros"));
 
     }
-
-
 
     @Override
     public void onBackPressed() {
