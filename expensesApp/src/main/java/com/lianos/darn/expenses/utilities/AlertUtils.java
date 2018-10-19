@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 /**
  * @author Vasilis Lianos
  */
-public class AlertUtils {
+public final class AlertUtils {
 
     private static final Logger log = LoggerFactory.getLogger(AlertUtils.class);
 
