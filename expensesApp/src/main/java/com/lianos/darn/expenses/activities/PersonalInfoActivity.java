@@ -1,4 +1,4 @@
-package com.lianos.darn.expenses;
+package com.lianos.darn.expenses.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import com.lianos.darn.expenses.R;
 import com.lianos.darn.expenses.utilities.AlertUtils;
 import com.lianos.darn.expenses.utilities.BackClickListener;
 import com.lianos.darn.expenses.utilities.FileUtils;
@@ -19,8 +20,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.lianos.darn.expenses.DisplayActivity.EXPENSES_FILE;
-import static com.lianos.darn.expenses.DisplayActivity.SAVINGS_FILE;
+import static com.lianos.darn.expenses.activities.DisplayActivity.EXPENSES_FILE;
+import static com.lianos.darn.expenses.activities.DisplayActivity.SAVINGS_FILE;
 import static com.lianos.darn.expenses.utilities.AlertUtils.checkFields;
 import static com.lianos.darn.expenses.utilities.FileUtils.getOrCreate;
 import static com.lianos.darn.expenses.utilities.FileUtils.getStringFromFile;

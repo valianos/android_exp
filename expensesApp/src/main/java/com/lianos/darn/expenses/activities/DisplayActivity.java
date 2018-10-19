@@ -1,4 +1,4 @@
-package com.lianos.darn.expenses;
+package com.lianos.darn.expenses.activities;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -21,7 +21,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.lianos.darn.expenses.PersonalInfoActivity.PersonalInfo;
+import com.lianos.darn.expenses.R;
+import com.lianos.darn.expenses.activities.PersonalInfoActivity.PersonalInfo;
 import com.lianos.darn.expenses.utilities.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,7 @@ import java.util.Calendar;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
-import static com.lianos.darn.expenses.PersonalInfoActivity.PERSONAL_INFO_KEY;
+import static com.lianos.darn.expenses.activities.PersonalInfoActivity.PERSONAL_INFO_KEY;
 import static com.lianos.darn.expenses.utilities.AlertUtils.debugAlert;
 import static com.lianos.darn.expenses.utilities.AlertUtils.editTextAlert;
 

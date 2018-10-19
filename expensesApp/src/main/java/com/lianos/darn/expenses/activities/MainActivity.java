@@ -1,19 +1,19 @@
-package com.lianos.darn.expenses;
+package com.lianos.darn.expenses.activities;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import com.lianos.darn.expenses.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
-import static com.lianos.darn.expenses.SignUpActivity.SIGNUP_CREDENTIALS_FILENAME;
+import static com.lianos.darn.expenses.activities.SignUpActivity.SIGNUP_CREDENTIALS_FILENAME;
 
 public class MainActivity extends AppCompatActivity {
 
