@@ -35,12 +35,20 @@
     <string name="add_new_element">Adding a new element</string>
     <string name="OK">OK</string>
     <string name="new_expense">Add a new expense.</string>
-    <string name="greetings">Greetings </string>
+    <string name="greetings">Greetings</string>
     <string name="wage">Your wage is:</string>
     <string name="remaining">Your remaining for this month is:</string>
-    <string name="per_day">Your remaining is divided per day as: </string>
+    <string name="per_day">Your remaining is divided per day as:</string>
     <string name="expenses">Your current expenses are:</string>
+    <string name="savings">Your current savings are:</string>
     <string name="intro">Welcome</string>
     <string name="force_sign_up">force sign up</string>
+    <string name="add_element">Add a new element</string>
+    <string name="new_expense_option">New expense</string>
+    <string name="add_amount">Please add amount of money.</string>
+    <string name="set_date_or_default">Date (leave blank to select NOW)</string>
+    <string name="new_saving">New saving</string>
+    <string name="radioButtonExpense">Expense</string>
+    <string name="radioButtonSaving">Saving</string>
 
 </resources>

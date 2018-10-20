@@ -1,6 +1,7 @@
 package com.lianos.darn.expenses.activities;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
@@ -10,7 +11,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -23,15 +23,23 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.lianos.darn.expenses.R;
 import com.lianos.darn.expenses.activities.PersonalInfoActivity.PersonalInfo;
-import com.lianos.darn.expenses.utilities.FileUtils;
+import com.lianos.darn.expenses.protocol.Protocol;
+import com.lianos.darn.expenses.protocol.Protocol.Expense;
+import com.lianos.darn.expenses.protocol.Protocol.Saving;
+import com.lianos.darn.expenses.utilities.AlertUtils;
+import com.lianos.darn.expenses.utilities.DatabaseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
+import static com.lianos.darn.expenses.activities.ElementAmountActivity.NEW_EXPENSE_FILE;
+import static com.lianos.darn.expenses.activities.ElementAmountActivity.NEW_SAVING_FILE;
 import static com.lianos.darn.expenses.activities.PersonalInfoActivity.PERSONAL_INFO_KEY;
 import static com.lianos.darn.expenses.utilities.AlertUtils.debugAlert;
 import static com.lianos.darn.expenses.utilities.AlertUtils.editTextAlert;
@@ -45,6 +53,12 @@ public class DisplayActivity extends AppCompatActivity implements NavigationView
     public static final String SAVINGS_FILE = "savingsFile";
 
     private boolean secondBackPressed = false;
+
+    private Intent element;
+
+    boolean isPaused = false;
+
+    private PersonalInfo info;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -81,36 +95,33 @@ public class DisplayActivity extends AppCompatActivity implements NavigationView
 
         // ------- Main display fields.
 
-        AtomicInteger totalMoney = new AtomicInteger();
-
         Bundle bundle = getIntent().getExtras();
         assert bundle != null;
 
-        PersonalInfo info = (PersonalInfo) bundle.getSerializable(PERSONAL_INFO_KEY);
+        if (info == null) info = (PersonalInfo) bundle.getSerializable(PERSONAL_INFO_KEY);
         if (info == null) return;
 
-        log.debug("Found personal info: [{}]", info);
+        log.debug("Found personal info: [{}]. Will set fields.", info);
+        AtomicInteger totalMoney = new AtomicInteger();
         totalMoney.set(info.wage);
 
-        info.expenses.forEach(e -> totalMoney.addAndGet(-e));
-
-        // Bind remaining-money button with listener.
-        FloatingActionButton fab = findViewById(R.id.fab);
-        final int money = totalMoney.get();
-        fab.setOnClickListener(
-                view -> Snackbar.make(view, "Remaining: " + money, Snackbar.LENGTH_LONG)
-                        .show()
-        );
+        info.expenses.forEach(e -> totalMoney.addAndGet(-e.getAmount()));
+        info.savings.forEach(s -> totalMoney.addAndGet(-s.getAmount()));
 
         TextView greeting = findViewById(R.id.greeting);
         greeting.setText(String.format("%s %s", getString(R.string.greetings), info.name));
 
         TextView remaining = findViewById(R.id.remaining);
+        final int money = totalMoney.get();
         remaining.setText(String.format("%s %s %s", getString(R.string.remaining), money, "Euros"));
 
         TextView expenses = findViewById(R.id.expenses);
         expenses.setSelected(true);
         expenses.setText(String.format("%s %s", getString(R.string.expenses), PersonalInfo.getList(info.expenses)));
+
+        TextView savings = findViewById(R.id.savings);
+        savings.setSelected(true);
+        savings.setText(String.format("%s %s", getString(R.string.savings), PersonalInfo.getList(info.savings)));
 
         Calendar instance = Calendar.getInstance();
         int monthDay = instance.get(Calendar.DAY_OF_MONTH);
@@ -131,6 +142,101 @@ public class DisplayActivity extends AppCompatActivity implements NavigationView
 
         TextView headerSub = headerView.findViewById(R.id.drawer_subtitle);
         headerSub.setText(String.format("%s %s %s", getString(R.string.wage), info.wage, "Euros"));
+
+        // ------- Buttons.
+
+        // Bind add element button with listener.
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(
+                view -> {
+
+                    element = new Intent(DisplayActivity.this, ElementAmountActivity.class);
+                    element.putExtra(PERSONAL_INFO_KEY, info);
+                    DisplayActivity.this.startActivity(element);
+
+                }
+        );
+
+
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    protected void onStop() {
+
+        File expensesFile = new File(getFilesDir(), EXPENSES_FILE);
+        File savingsFile = new File(getFilesDir(), SAVINGS_FILE);
+        try {
+
+            DatabaseUtil.dump(expensesFile, info.expenses);
+            DatabaseUtil.dump(savingsFile, info.savings);
+
+        } catch (IOException e) { log.error("Failed.", e); }
+
+        super.onStop();
+
+    }
+
+    @Override
+    protected void onPause() { super.onPause(); isPaused = true; }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    protected void onResume() {
+
+        super.onResume();
+
+        if (isPaused) {
+
+            File cache = null;
+            try {
+
+                AtomicReference<Protocol.Amount> amount = new AtomicReference<>();
+
+                cache = new File(getCacheDir(), NEW_EXPENSE_FILE);
+                if (cache.exists()) {
+
+                    DatabaseUtil.readDatabase(cache, Protocol.Expense.class, amount::set);
+
+
+                } else {
+
+                    cache = new File(getCacheDir(), NEW_SAVING_FILE);
+                    if (cache.exists()) {
+
+                        DatabaseUtil.readDatabase(cache, Protocol.Saving.class, amount::set);
+
+                    }
+
+                }
+
+                Protocol.Amount value = amount.get();
+                if (value == null) { isPaused = false; return; }
+
+                if (value instanceof Expense) info.expenses.add(value);
+                else if (value instanceof Saving) info.savings.add(value);
+                else throw new IllegalArgumentException("Unexpected class: " + value.getClass());
+
+            } catch (IOException e) {
+
+                log.error("Failed.", e);
+                AlertUtils.fileCreationFailure(this);
+                return;
+
+            } finally {
+
+                if (cache != null && !cache.delete())
+                    log.error("failed to delete cached file [{}]", cache.getPath());
+
+            }
+
+            log.debug("Resuming with info: [{}]", info);
+
+            displayFields();
+        }
+
+        isPaused = false;
 
     }
 
@@ -176,15 +282,12 @@ public class DisplayActivity extends AppCompatActivity implements NavigationView
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        debugAlert(this, "Settings");
-
         if (id == R.id.action_settings) return true;
 
         return super.onOptionsItemSelected(item);
 
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
@@ -194,8 +297,6 @@ public class DisplayActivity extends AppCompatActivity implements NavigationView
         switch (id) {
 
             case R.id.newExpense:
-
-                editTextAlert(this, "Please enter the new expense..", "Expense adder", new TextConsumer(this));
 
                 break;
 
@@ -226,39 +327,6 @@ public class DisplayActivity extends AppCompatActivity implements NavigationView
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    public final class TextConsumer implements Consumer<String> {
-
-        private final Activity activity;
-
-        TextConsumer(Activity activity) { this.activity = activity; }
-
-        @RequiresApi(api = Build.VERSION_CODES.O)
-        @Override
-        public void accept(String s) {
-
-            log.debug("User input from display activity: [{}]", s);
-
-            Intent intent = activity.getIntent();
-            Bundle bundle = intent.getExtras();
-            assert bundle != null;
-            PersonalInfo info = (PersonalInfo) bundle.getSerializable(PERSONAL_INFO_KEY);
-            assert info != null;
-            info.expenses.add(Integer.parseInt(s));
-
-            intent.putExtra(PERSONAL_INFO_KEY, info);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-
-            File file = new File(getFilesDir(), EXPENSES_FILE);
-            FileUtils.dumpToFile(activity, file, s);
-
-            finish();
-            startActivity(getIntent());
-
-        }
 
     }
 

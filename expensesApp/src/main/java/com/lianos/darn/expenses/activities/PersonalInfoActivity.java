@@ -10,14 +10,17 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import com.lianos.darn.expenses.R;
+import com.lianos.darn.expenses.protocol.Protocol;
 import com.lianos.darn.expenses.utilities.AlertUtils;
 import com.lianos.darn.expenses.utilities.BackClickListener;
+import com.lianos.darn.expenses.utilities.DatabaseUtil;
 import com.lianos.darn.expenses.utilities.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static com.lianos.darn.expenses.activities.DisplayActivity.EXPENSES_FILE;
@@ -56,6 +59,7 @@ public class PersonalInfoActivity extends AppCompatActivity {
 
         public ClickListener(Activity activity) { this.activity = activity; }
 
+        @SuppressWarnings("Duplicates")
         @RequiresApi(api = Build.VERSION_CODES.O)
         @Override
         public void onClick(View v) {
@@ -94,31 +98,21 @@ public class PersonalInfoActivity extends AppCompatActivity {
 
             }
 
-            // Check if expenses file exists, create it otherwise (persistent).
-            File expensesFile = new File(getFilesDir(), EXPENSES_FILE);
-            List<String> expensesContents = getOrCreate(getApplicationContext(), expensesFile.getPath());
-            if (expensesContents == null) return;
+            File expenseDb;
+            File savingDb;
+            try {
 
-            log.debug("Expenses file created [{}]. Contents: [{}].", expensesFile.exists(), expensesContents);
-            if (!expensesContents.isEmpty()) {
+                expenseDb = DatabaseUtil.createDatabase(getFilesDir(), EXPENSES_FILE);
+                DatabaseUtil.readDatabase(expenseDb, Protocol.Expense.class, info.expenses::add);
 
-                for (String expense : expensesContents)
-                    if (!expense.isEmpty())
-                        info.expenses.add(Integer.parseInt(expense));
+                savingDb = DatabaseUtil.createDatabase(getFilesDir(), SAVINGS_FILE);
+                DatabaseUtil.readDatabase(savingDb, Protocol.Saving.class, info.savings::add);
 
-            }
+            } catch (IOException e) {
 
-            // Check if savings file exists, create it otherwise (persistent).
-            File savingsFile = new File(getFilesDir(), SAVINGS_FILE);
-            List<String> savingsContents = getOrCreate(getApplicationContext(), savingsFile.getPath());
-            if (savingsContents == null) return;
-
-            log.debug("Savings file created [{}]. Contents: [{}].", savingsFile.exists(), savingsContents);
-            if (!savingsContents.isEmpty()) {
-
-                for (String saving : savingsContents)
-                    if (!saving.isEmpty())
-                        info.savings.add(Integer.parseInt(saving));
+                log.error("Failed.", e);
+                AlertUtils.fileCreationFailure(activity);
+                return;
 
             }
 
@@ -134,15 +128,15 @@ public class PersonalInfoActivity extends AppCompatActivity {
     }
 
 
-    final static class PersonalInfo implements Serializable {
+    final static class PersonalInfo implements Serializable, Protocol {
 
         public final String name;
 
         public final int wage;
 
-        public final List<Integer> expenses = new ArrayList<>();
+        public final List<Amount> expenses = new ArrayList<>();
 
-        public final List<Integer> savings = new ArrayList<>();
+        public final List<Amount> savings = new ArrayList<>();
 
         PersonalInfo(String name, int wage) {
 
@@ -161,19 +155,22 @@ public class PersonalInfoActivity extends AppCompatActivity {
             return "PersonalInfo: {\n" +
                     "\tname: " + name + "\n" +
                     "\twage: " + wage + "\n" +
-                    "\texpenses: " + exp + "\n" +
-                    "\tsavings: " + sav + "\n" +
+                    "\texpenses:\n" + exp + "\n" +
+                    "\tsavings:\n" + sav + "\n" +
                     "}";
 
         }
 
-        public static StringBuilder getList(List<Integer> list) {
+        public static StringBuilder getList(List<Amount> list) {
 
             StringBuilder exp = new StringBuilder();
-            for (Integer i : list) {
+            for (Amount i : list) {
 
-                exp.append(i);
-                if (list.indexOf(i) != list.size() - 1) exp.append(" - ");
+                exp.append(i.getAmount()).append(" ")
+                   .append(i.getCurrency()).append("-")
+                   .append(new Date(i.getDate()))
+                   .append(" ");
+                if (list.indexOf(i) != list.size() - 1) exp.append("\n");
 
             }
 

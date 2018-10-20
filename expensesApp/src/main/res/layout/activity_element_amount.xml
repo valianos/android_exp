@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".activities.ElementAmountActivity">
+
+    <TextView
+
+            android:text="@string/add_element"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+
+            android:id="@+id/textViewNewElement"
+
+            android:layout_marginTop="60dp"
+            app:layout_constraintHorizontal_bias="0.501"
+
+    />
+
+    <EditText
+
+            android:layout_width="wrap_content"
+            android:layout_height="71dp"
+            android:inputType="number"
+            android:id="@+id/amount"
+            android:hint="@string/add_amount"
+            android:textColorHint="@android:color/black"
+
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginLeft="64dp"
+            android:layout_marginStart="64dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            app:layout_constraintHorizontal_bias="0.048"
+            android:layout_marginBottom="40dp"
+            app:layout_constraintBottom_toTopOf="@+id/date_picker"
+
+    />
+
+    <EditText
+
+            android:layout_width="wrap_content"
+            android:layout_height="38dp"
+            android:inputType="date"
+            android:id="@+id/date_picker"
+            android:textColorHint="@android:color/black"
+            android:hint="@string/set_date_or_default"
+
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginLeft="56dp"
+            android:layout_marginStart="56dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="160dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            app:layout_constraintHorizontal_bias="0.0"
+
+    />
+
+    <RadioGroup
+
+            android:id="@+id/amountRadioGroup"
+            android:layout_width="150dp"
+            android:layout_height="72dp"
+            app:layout_constraintStart_toStartOf="parent"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/textViewNewElement"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/amount"
+
+            app:layout_constraintVertical_bias="0.742">
+
+        <RadioButton
+                android:text="@string/radioButtonExpense"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:id="@+id/radioButtonExpense"
+                android:layout_weight="1"
+        />
+
+        <RadioButton
+                android:text="@string/radioButtonSaving"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/radioButtonSaving"
+                android:layout_weight="1"
+        />
+
+    </RadioGroup>
+
+    <ImageButton
+
+            android:layout_width="73dp"
+            android:layout_height="67dp"
+            app:srcCompat="@drawable/done_button"
+            android:id="@+id/save_amount"
+            android:background="@android:color/holo_green_dark"
+            android:clickable="true"
+            android:focusable="true"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:cropToPadding="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="24dp"
+            android:layout_marginRight="24dp"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="24dp"
+            app:layout_constraintVertical_bias="0.916"
+            style="@style/Widget.AppCompat.ImageButton"
+            android:contentDescription="@string/done_button"
+
+    />
+
+</android.support.constraint.ConstraintLayout>

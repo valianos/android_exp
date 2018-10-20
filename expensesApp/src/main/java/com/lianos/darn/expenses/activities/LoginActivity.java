@@ -12,13 +12,16 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import com.lianos.darn.expenses.R;
 import com.lianos.darn.expenses.activities.PersonalInfoActivity.PersonalInfo;
+import com.lianos.darn.expenses.protocol.Protocol;
+import com.lianos.darn.expenses.utilities.AlertUtils;
 import com.lianos.darn.expenses.utilities.BackClickListener;
+import com.lianos.darn.expenses.utilities.DatabaseUtil;
 import com.lianos.darn.expenses.utilities.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.List;
+import java.io.IOException;
 
 import static com.lianos.darn.expenses.activities.DisplayActivity.EXPENSES_FILE;
 import static com.lianos.darn.expenses.activities.DisplayActivity.SAVINGS_FILE;
@@ -26,7 +29,6 @@ import static com.lianos.darn.expenses.activities.PersonalInfoActivity.PERSONAL_
 import static com.lianos.darn.expenses.activities.PersonalInfoActivity.PERSONAL_INFO_KEY;
 import static com.lianos.darn.expenses.activities.SignUpActivity.SIGNUP_CREDENTIALS_FILENAME;
 import static com.lianos.darn.expenses.utilities.AlertUtils.checkFields;
-import static com.lianos.darn.expenses.utilities.FileUtils.getOrCreate;
 import static com.lianos.darn.expenses.utilities.FileUtils.getStringFromFile;
 
 public class LoginActivity extends AppCompatActivity {
@@ -58,6 +60,7 @@ public class LoginActivity extends AppCompatActivity {
 
         public ClickListener(Activity activity) { this.activity = activity; }
 
+        @SuppressWarnings("Duplicates")
         @RequiresApi(api = Build.VERSION_CODES.O)
         @Override
         public void onClick(View v) {
@@ -135,31 +138,21 @@ public class LoginActivity extends AppCompatActivity {
                     String[] parts = personalContents.split("-");
                     PersonalInfo info = new PersonalInfo(parts[0], Integer.parseInt(parts[1]));
 
-                    // Check if expenses file exists, create it otherwise (persistent).
-                    File expensesFile = new File(getFilesDir(), EXPENSES_FILE);
-                    List<String> expensesContents = getOrCreate(getApplicationContext(), expensesFile.getPath());
-                    if (expensesContents == null) return;
+                    File expenseDb;
+                    File savingDb;
+                    try {
 
-                    log.debug("Expenses file found [{}]. Contents: [{}].", expensesFile.exists(), expensesContents);
-                    if (!expensesContents.isEmpty()) {
+                        expenseDb = DatabaseUtil.createDatabase(getFilesDir(), EXPENSES_FILE);
+                        DatabaseUtil.readDatabase(expenseDb, Protocol.Expense.class, info.expenses::add);
 
-                        for (String expense : expensesContents)
-                            if (!expense.isEmpty())
-                                info.expenses.add(Integer.parseInt(expense));
+                        savingDb = DatabaseUtil.createDatabase(getFilesDir(), SAVINGS_FILE);
+                        DatabaseUtil.readDatabase(savingDb, Protocol.Saving.class, info.savings::add);
 
-                    }
+                    } catch (IOException e) {
 
-                    // Check if savings file exists, create it otherwise (persistent).
-                    File savingsFile = new File(getFilesDir(), SAVINGS_FILE);
-                    List<String> savingsContents = getOrCreate(getApplicationContext(), savingsFile.getPath());
-                    if (savingsContents == null) return;
-
-                    log.debug("Savings file found [{}]. Contents: [{}].", savingsFile.exists(), savingsContents);
-                    if (!savingsContents.isEmpty()) {
-
-                        for (String saving : savingsContents)
-                            if (!saving.isEmpty())
-                                info.savings.add(Integer.parseInt(saving));
+                        log.error("Failed.", e);
+                        AlertUtils.fileCreationFailure(activity);
+                        return;
 
                     }
 
