@@ -6,8 +6,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:showIn="@layout/app_bar_display"
-        tools:context=".activities.DisplayActivity">
+        tools:context=".activities.fragments.InfoFragment">
+
 
     <TextView
 
@@ -39,45 +39,45 @@
 
     <TextView
 
-        android:singleLine="true"
-        android:ellipsize="marquee"
-        android:marqueeRepeatLimit="marquee_forever"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:gravity="start"
-        android:scrollHorizontally="true"
-        android:layout_width="205dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:id="@+id/expenses"
-        app:layout_constraintTop_toBottomOf="@id/remaining"
-        android:layout_marginTop="38dp"
-        android:layout_marginBottom="8dp"
-        android:textSize="14sp"
-        android:textColor="@color/totalBlack"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="start"
+            android:scrollHorizontally="true"
+            android:layout_width="205dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:id="@+id/expenses"
+            app:layout_constraintTop_toBottomOf="@id/remaining"
+            android:layout_marginTop="38dp"
+            android:layout_marginBottom="8dp"
+            android:textSize="14sp"
+            android:textColor="@color/totalBlack"
 
     />
 
     <TextView
 
-        android:singleLine="true"
-        android:ellipsize="marquee"
-        android:marqueeRepeatLimit="marquee_forever"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:gravity="start"
-        android:scrollHorizontally="true"
-        android:layout_width="205dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:id="@+id/savings"
-        app:layout_constraintTop_toBottomOf="@id/expenses"
-        android:layout_marginTop="38dp"
-        android:layout_marginBottom="8dp"
-        android:textSize="14sp"
-        android:textColor="@color/totalBlack"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="start"
+            android:scrollHorizontally="true"
+            android:layout_width="205dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:id="@+id/savings"
+            app:layout_constraintTop_toBottomOf="@id/expenses"
+            android:layout_marginTop="38dp"
+            android:layout_marginBottom="8dp"
+            android:textSize="14sp"
+            android:textColor="@color/totalBlack"
 
     />
 

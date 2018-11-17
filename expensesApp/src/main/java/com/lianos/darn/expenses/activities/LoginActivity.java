@@ -23,8 +23,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 
-import static com.lianos.darn.expenses.activities.DisplayActivity.EXPENSES_FILE;
-import static com.lianos.darn.expenses.activities.DisplayActivity.SAVINGS_FILE;
+import static com.lianos.darn.expenses.activities.DisplayTabbedActivity.EXPENSES_FILE;
+import static com.lianos.darn.expenses.activities.DisplayTabbedActivity.SAVINGS_FILE;
 import static com.lianos.darn.expenses.activities.PersonalInfoActivity.PERSONAL_INFO_FILE;
 import static com.lianos.darn.expenses.activities.PersonalInfoActivity.PERSONAL_INFO_KEY;
 import static com.lianos.darn.expenses.activities.SignUpActivity.SIGNUP_CREDENTIALS_FILENAME;
@@ -158,7 +158,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     log.debug(info.toString());
 
-                    Intent display = new Intent(LoginActivity.this, DisplayActivity.class);
+                    Intent display = new Intent(LoginActivity.this, DisplayTabbedActivity.class);
                     display.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     display.putExtra(PERSONAL_INFO_KEY, info);
                     LoginActivity.this.startActivity(display);

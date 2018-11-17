@@ -26,8 +26,8 @@
                 android:name=".activities.SignUpActivity"
                 android:label="@string/sign_up"/>
         <activity
-                android:name=".activities.DisplayActivity"
-                android:label="@string/title_activity_display"
+                android:name=".activities.DisplayTabbedActivity"
+                android:label="@string/title_activity_display_tabbed"
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity android:name=".activities.ElementAmountActivity">

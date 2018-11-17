@@ -45,7 +45,7 @@
             android:layout_marginRight="8dp"
             app:layout_constraintHorizontal_bias="0.048"
             android:layout_marginBottom="40dp"
-            app:layout_constraintBottom_toTopOf="@+id/date_picker"
+            app:layout_constraintBottom_toTopOf="@id/date_picker"
 
     />
 
@@ -79,9 +79,9 @@
 
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/textViewNewElement"
+            app:layout_constraintTop_toBottomOf="@id/textViewNewElement"
             android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/amount"
+            app:layout_constraintBottom_toTopOf="@id/amount"
 
             app:layout_constraintVertical_bias="0.742">
 

@@ -1,9 +1,9 @@
 package com.lianos.darn.expenses.activities;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources.Theme;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,21 +11,23 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ThemedSpinnerAdapter;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.view.*;
+import android.widget.*;
+import android.widget.AdapterView.OnItemSelectedListener;
 import com.lianos.darn.expenses.R;
 import com.lianos.darn.expenses.activities.PersonalInfoActivity.PersonalInfo;
+import com.lianos.darn.expenses.activities.fragments.CalendarFragment;
+import com.lianos.darn.expenses.activities.fragments.InfoFragment;
 import com.lianos.darn.expenses.protocol.Protocol;
-import com.lianos.darn.expenses.protocol.Protocol.Expense;
-import com.lianos.darn.expenses.protocol.Protocol.Saving;
 import com.lianos.darn.expenses.utilities.AlertUtils;
 import com.lianos.darn.expenses.utilities.DatabaseUtil;
 import org.slf4j.Logger;
@@ -33,20 +35,16 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 
 import static com.lianos.darn.expenses.activities.ElementAmountActivity.NEW_EXPENSE_FILE;
 import static com.lianos.darn.expenses.activities.ElementAmountActivity.NEW_SAVING_FILE;
 import static com.lianos.darn.expenses.activities.PersonalInfoActivity.PERSONAL_INFO_KEY;
-import static com.lianos.darn.expenses.utilities.AlertUtils.debugAlert;
-import static com.lianos.darn.expenses.utilities.AlertUtils.editTextAlert;
 
-public class DisplayActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class DisplayTabbedActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final Logger log = LoggerFactory.getLogger(DisplayActivity.class);
+    private static final Logger log = LoggerFactory.getLogger(DisplayTabbedActivity.class);
 
     public static final String EXPENSES_FILE = "expensesFile";
 
@@ -54,11 +52,13 @@ public class DisplayActivity extends AppCompatActivity implements NavigationView
 
     private boolean secondBackPressed = false;
 
+    private boolean isPaused = false;
+
     private Intent element;
 
-    boolean isPaused = false;
-
     private PersonalInfo info;
+
+    private RedrawableFragment fragment;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -69,11 +69,14 @@ public class DisplayActivity extends AppCompatActivity implements NavigationView
         super.onCreate(savedInstanceState);
 
         // Link with the XML file.
-        setContentView(R.layout.activity_display);
+        setContentView(R.layout.activity_display_tabbed);
 
         // Enable toolbar.
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // Do not show name of activity on the top bar.
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
 
         // Link with the XML file.
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -84,52 +87,47 @@ public class DisplayActivity extends AppCompatActivity implements NavigationView
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        // Add values to fields.
-        displayFields();
-
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    @SuppressLint("DefaultLocale")
-    private void displayFields() {
-
-        // ------- Main display fields.
-
+        // Find passed personal info object.
         Bundle bundle = getIntent().getExtras();
         assert bundle != null;
 
         if (info == null) info = (PersonalInfo) bundle.getSerializable(PERSONAL_INFO_KEY);
         if (info == null) return;
 
-        log.debug("Found personal info: [{}]. Will set fields.", info);
-        AtomicInteger totalMoney = new AtomicInteger();
-        totalMoney.set(info.wage);
+        log.debug("Found personal info: [{}].", info);
 
-        info.expenses.forEach(e -> totalMoney.addAndGet(-e.getAmount()));
-        info.savings.forEach(s -> totalMoney.addAndGet(-s.getAmount()));
+        // Setup spinner
+        Spinner spinner = findViewById(R.id.spinner);
+        spinner.setAdapter(new SpinnerAdapter(
+                toolbar.getContext(),
+                new String[]{
+                        "Display",
+                        "Calendar",
+                        "Section 3",
+                }));
 
-        TextView greeting = findViewById(R.id.greeting);
-        greeting.setText(String.format("%s %s", getString(R.string.greetings), info.name));
+        // Bind spinner with listener.
+        spinner.setOnItemSelectedListener(new SpinnerListener(getSupportFragmentManager()));
 
-        TextView remaining = findViewById(R.id.remaining);
-        final int money = totalMoney.get();
-        remaining.setText(String.format("%s %s %s", getString(R.string.remaining), money, "Euros"));
+        // ------- Buttons.
 
-        TextView expenses = findViewById(R.id.expenses);
-        expenses.setSelected(true);
-        expenses.setText(String.format("%s %s", getString(R.string.expenses), PersonalInfo.getList(info.expenses)));
+        // Bind add element button with listener.
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(
+                view -> {
 
-        TextView savings = findViewById(R.id.savings);
-        savings.setSelected(true);
-        savings.setText(String.format("%s %s", getString(R.string.savings), PersonalInfo.getList(info.savings)));
+                    element = new Intent(DisplayTabbedActivity.this, ElementAmountActivity.class);
+                    element.putExtra(PERSONAL_INFO_KEY, info);
+                    DisplayTabbedActivity.this.startActivity(element);
 
-        Calendar instance = Calendar.getInstance();
-        int monthDay = instance.get(Calendar.DAY_OF_MONTH);
-        int totalDays = instance.getActualMaximum(Calendar.DAY_OF_MONTH);
-        float perDayMoney = (float) money / (totalDays - monthDay);
+                }
+        );
 
-        TextView perDay = findViewById(R.id.per_day);
-        perDay.setText(String.format("%s %.3f %s", getString(R.string.per_day), perDayMoney, "Euros"));
+        redraw();
+
+    }
+
+    private void redraw() {
 
         // ------- Drawer display fields.
 
@@ -143,20 +141,7 @@ public class DisplayActivity extends AppCompatActivity implements NavigationView
         TextView headerSub = headerView.findViewById(R.id.drawer_subtitle);
         headerSub.setText(String.format("%s %s %s", getString(R.string.wage), info.wage, "Euros"));
 
-        // ------- Buttons.
-
-        // Bind add element button with listener.
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(
-                view -> {
-
-                    element = new Intent(DisplayActivity.this, ElementAmountActivity.class);
-                    element.putExtra(PERSONAL_INFO_KEY, info);
-                    DisplayActivity.this.startActivity(element);
-
-                }
-        );
-
+        if (fragment != null) fragment.redraw(info);
 
     }
 
@@ -199,7 +184,6 @@ public class DisplayActivity extends AppCompatActivity implements NavigationView
 
                     DatabaseUtil.readDatabase(cache, Protocol.Expense.class, amount::set);
 
-
                 } else {
 
                     cache = new File(getCacheDir(), NEW_SAVING_FILE);
@@ -214,8 +198,8 @@ public class DisplayActivity extends AppCompatActivity implements NavigationView
                 Protocol.Amount value = amount.get();
                 if (value == null) { isPaused = false; return; }
 
-                if (value instanceof Expense) info.expenses.add(value);
-                else if (value instanceof Saving) info.savings.add(value);
+                if (value instanceof Protocol.Expense) info.expenses.add(value);
+                else if (value instanceof Protocol.Saving) info.savings.add(value);
                 else throw new IllegalArgumentException("Unexpected class: " + value.getClass());
 
             } catch (IOException e) {
@@ -232,8 +216,8 @@ public class DisplayActivity extends AppCompatActivity implements NavigationView
             }
 
             log.debug("Resuming with info: [{}]", info);
+            redraw();
 
-            displayFields();
         }
 
         isPaused = false;
@@ -269,7 +253,7 @@ public class DisplayActivity extends AppCompatActivity implements NavigationView
     public boolean onCreateOptionsMenu(Menu menu) {
 
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.display, menu);
+        getMenuInflater().inflate(R.menu.menu_display_tabbed, menu);
         return true;
 
     }
@@ -282,6 +266,7 @@ public class DisplayActivity extends AppCompatActivity implements NavigationView
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) return true;
 
         return super.onOptionsItemSelected(item);
@@ -329,5 +314,80 @@ public class DisplayActivity extends AppCompatActivity implements NavigationView
         return true;
 
     }
+
+    private static class SpinnerAdapter extends ArrayAdapter<String> implements ThemedSpinnerAdapter {
+
+        private final ThemedSpinnerAdapter.Helper mDropDownHelper;
+
+        SpinnerAdapter(Context context, String[] objects) {
+
+            super(context, android.R.layout.simple_list_item_1, objects);
+            mDropDownHelper = new ThemedSpinnerAdapter.Helper(context);
+
+        }
+
+        @Override
+        public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
+
+            View view;
+
+            if (convertView == null) {
+
+                // Inflate the drop down using the helper's LayoutInflater
+                LayoutInflater inflater = mDropDownHelper.getDropDownViewInflater();
+                view = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+
+            } else view = convertView;
+
+            TextView textView = view.findViewById(android.R.id.text1);
+            textView.setText(getItem(position));
+
+            return view;
+        }
+
+        @Override
+        public Theme getDropDownViewTheme() { return mDropDownHelper.getDropDownViewTheme(); }
+
+        @Override
+        public void setDropDownViewTheme(Theme theme) { mDropDownHelper.setDropDownViewTheme(theme); }
+
+    }
+
+    class SpinnerListener implements OnItemSelectedListener {
+
+        private final FragmentManager manager;
+
+        SpinnerListener(FragmentManager manager) { this.manager = manager; }
+
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            // When the given dropdown item is selected, show its contents in the
+            // container view.
+            FragmentTransaction transaction = manager.beginTransaction();
+
+            switch (position) {
+
+                case 0:
+
+                    transaction.replace(R.id.container, (Fragment) (fragment = InfoFragment.newInstance(info))).commit();
+                    break;
+
+                case 1:
+
+                    transaction.replace(R.id.container, (Fragment) (fragment = CalendarFragment.newInstance(info))).commit();
+                    break;
+
+            }
+
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {}
+
+
+    }
+
+    public interface RedrawableFragment { void redraw(PersonalInfo info); }
 
 }

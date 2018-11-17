@@ -18,15 +18,16 @@ import com.lianos.darn.expenses.utilities.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.lianos.darn.expenses.activities.DisplayActivity.EXPENSES_FILE;
-import static com.lianos.darn.expenses.activities.DisplayActivity.SAVINGS_FILE;
+import static com.lianos.darn.expenses.activities.DisplayTabbedActivity.EXPENSES_FILE;
+import static com.lianos.darn.expenses.activities.DisplayTabbedActivity.SAVINGS_FILE;
 import static com.lianos.darn.expenses.utilities.AlertUtils.checkFields;
-import static com.lianos.darn.expenses.utilities.FileUtils.getOrCreate;
 import static com.lianos.darn.expenses.utilities.FileUtils.getStringFromFile;
 
 public class PersonalInfoActivity extends AppCompatActivity {
@@ -118,7 +119,7 @@ public class PersonalInfoActivity extends AppCompatActivity {
 
             log.debug(info.toString());
 
-            Intent display = new Intent(PersonalInfoActivity.this, DisplayActivity.class);
+            Intent display = new Intent(PersonalInfoActivity.this, DisplayTabbedActivity.class);
             display.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             display.putExtra(PERSONAL_INFO_KEY, info);
             PersonalInfoActivity.this.startActivity(display);
@@ -128,7 +129,7 @@ public class PersonalInfoActivity extends AppCompatActivity {
     }
 
 
-    final static class PersonalInfo implements Serializable, Protocol {
+    public final static class PersonalInfo implements Serializable, Protocol {
 
         public final String name;
 

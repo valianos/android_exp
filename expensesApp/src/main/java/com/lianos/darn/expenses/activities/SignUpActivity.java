@@ -15,8 +15,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
-import static com.lianos.darn.expenses.activities.DisplayActivity.EXPENSES_FILE;
-import static com.lianos.darn.expenses.activities.DisplayActivity.SAVINGS_FILE;
+import static com.lianos.darn.expenses.activities.DisplayTabbedActivity.EXPENSES_FILE;
+import static com.lianos.darn.expenses.activities.DisplayTabbedActivity.SAVINGS_FILE;
 import static com.lianos.darn.expenses.activities.PersonalInfoActivity.PERSONAL_INFO_FILE;
 import static com.lianos.darn.expenses.utilities.AlertUtils.checkFields;
 import static com.lianos.darn.expenses.utilities.FileUtils.deleteFiles;

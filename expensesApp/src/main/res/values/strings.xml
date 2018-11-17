@@ -50,5 +50,7 @@
     <string name="new_saving">New saving</string>
     <string name="radioButtonExpense">Expense</string>
     <string name="radioButtonSaving">Saving</string>
+    <string name="title_activity_display_tabbed">DisplayTabbedActivity</string>
+    <string name="section_format">Hello World from section: %1$d</string>
 
 </resources>
